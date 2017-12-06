@@ -2,13 +2,15 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import tkinter as tk
 
+from os import path
 from tkinter import messagebox
 from PIL import ImageTk, Image
+
+DIR_PATH = path.abspath(path.dirname(__file__))
 
 
 class App:
     def __init__(self, master):
-        self.centerize(master)
         self.main_frame = tk.Frame()
         self.main_frame.pack(fill=tk.BOTH)
 
@@ -16,7 +18,7 @@ class App:
         self.read_datasets()
 
         # image UI
-        self.img = ImageTk.PhotoImage(Image.open('./assets/img/world.jpg').resize((900, 200), Image.ANTIALIAS))
+        self.img = ImageTk.PhotoImage(Image.open(path.join(DIR_PATH, '../assets/img/world.jpg')).resize((900, 200), Image.ANTIALIAS))
         self.img_label = tk.Label(self.main_frame, image=self.img)
         self.img_label.image = self.img
         self.img_label.pack()
@@ -39,30 +41,16 @@ class App:
         self.btn = tk.Button(self.main_frame, text='Generate', command=self.build_chart)
         self.btn.pack(side=tk.BOTTOM)
 
-    def centerize(self, master):
-        w = 900
-        h = 700
-
-        ws = master.winfo_screenwidth()
-        hs = master.winfo_screenheight()
-
-        x = (ws/2) - (w/2)
-        y = (hs/2) - (h/2)
-
-        master.minsize(width=w, height=h)
-        master.maxsize(width=w, height=h)
-
-        master.geometry('%dx%d+%d+%d' % (w, h, x, y))
-        master.resizable(width=False, height=False)
-
     def read_datasets(self):
-        self.df_country = pd.read_csv('./dataset/Country.csv', index_col='CountryCode', usecols=['CountryCode', 'ShortName'])
+        self.df_country = pd.read_csv(path.join(DIR_PATH, '../dataset/Country.csv'),
+                                      index_col='CountryCode', usecols=['CountryCode', 'ShortName'])
         self.country_names_list = tuple(self.df_country['ShortName'])
 
-        self.df_indicator_names = pd.read_csv('./dataset/IndicatorsName.csv', sep='\t')
+        self.df_indicator_names = pd.read_csv(path.join(DIR_PATH, '../dataset/IndicatorsName.csv'), sep='\t')
         self.indicator_names_list = tuple(self.df_indicator_names['IndicatorName'])
 
-        self.df_indicators = pd.read_csv('./dataset/Indicators.csv', usecols=['CountryCode', 'IndicatorName', 'Year', 'Value'])
+        self.df_indicators = pd.read_csv(path.join(DIR_PATH, '../dataset/Indicators.csv'),
+                                         usecols=['CountryCode', 'IndicatorName', 'Year', 'Value'])
 
     def setup_countries_list(self):
         self.scrollbar_countries = tk.Scrollbar(self.lists_frame)
@@ -130,9 +118,3 @@ class App:
         mng.window.attributes("-fullscreen", True)
         mng.window.bind('<Escape>', lambda _: mng.window.destroy())
         plt.show()
-
-
-root = tk.Tk()
-root.title('World Development Indicators')
-App(root)
-root.mainloop()
