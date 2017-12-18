@@ -1,6 +1,6 @@
 import tkinter as tk
 
-from .app import App
+from .threaded_client import ThreadedClient
 
 
 class AppRoot:
@@ -12,7 +12,7 @@ class AppRoot:
 
         self.to_center()
         self.root.title('World Development Indicators')
-        App(self.root)
+        ThreadedClient(self.root)
         self.root.mainloop()
 
     def to_center(self):
